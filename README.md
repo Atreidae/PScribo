@@ -36,6 +36,11 @@ Document 'PScribo Example' {
     Paragraph "This is a regular line of text indented 0 tab stops with the computer name as data in bold italics: $env:COMPUTERNAME" -Bold -Italic
     Paragraph "This is a regular line of text indented 0 tab stops with the computer name as data in 14 point bold italics: $env:COMPUTERNAME" -Bold -Italic -Size 14
     Paragraph "This is a regular line of text indented 0 tab stops with the computer name as data in 8 point Courier New bold italics: $env:COMPUTERNAME" -Bold -Italic -Size 8 -Font 'Courier New'
+    Paragraph 
+    {
+        Text 'This is a regular line of text with a '
+        Link 'link to the PScribo GitHub repository' -URI 'https://github.com/iainbrighton/PScribo'
+    }
 
     PageBreak
 

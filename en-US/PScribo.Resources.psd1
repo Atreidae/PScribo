@@ -62,6 +62,7 @@ ProcessingImage                  = Processing image '{0}'.
 ProcessingLineBreak              = Processing line break.
 ProcessingPageBreak              = Processing page break.
 ProcessingParagraph              = Processing paragraph '{0}'.
+ProcessingParagraghTextLink      = Processing text link '{0} > {1}'.
 ProcessingSection                = Processing section '{0}'.
 ProcessingSectionStarted         = Processing section '{0}' started.
 ProcessingSectionCompleted       = Processing section '{0}' completed.

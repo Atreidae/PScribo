@@ -22,6 +22,7 @@ function Out-TextParagraph
     }
     process
     {
+        
         $convertToAlignedStringParams = @{
             Width       = $options.TextWidth
             Tabs        = $Paragraph.Tabs
@@ -37,6 +38,15 @@ function Out-TextParagraph
         [System.Text.StringBuilder] $paragraphBuilder = New-Object -TypeName 'System.Text.StringBuilder'
         foreach ($paragraphRun in $Paragraph.Sections)
         {
+            #handle links
+            if ($paragraphRun.Type -eq 'PScribo.TextLink')
+            {
+                $text = Resolve-PScriboToken -InputObject "$($paragraphRun.Text) > ($($paragraphRun.uri))"
+                [ref] $null = $paragraphBuilder.Append($text)
+                continue
+            }
+
+            Write-host $paragraphRun
             $text = Resolve-PScriboToken -InputObject $paragraphRun.Text
             [ref] $null = $paragraphBuilder.Append($text)
 

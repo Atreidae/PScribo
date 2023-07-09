@@ -17,6 +17,7 @@
                             'Image',
                             'Item',
                             'LineBreak',
+                            'Link'
                             'List',
                             'NumberStyle',
                             'PageBreak',

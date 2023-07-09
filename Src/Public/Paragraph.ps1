@@ -137,6 +137,12 @@ function Paragraph {
                     {
                         [ref] $null = $paragraph.Sections.Add($result)
                     }
+                    #Dont eat the text links
+                    Elseif (('Type' -in $result.PSObject.Properties.Name) -and
+                        ($result.Type -eq 'PScribo.TextLink'))
+                    {
+                        [ref] $null = $paragraph.Sections.Add($result)
+                    }
                     elseif (('Type' -in $result.PSObject.Properties.Name) -and
                         ($result.Type -match '^PScribo\.'))
                     {
