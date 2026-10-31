@@ -2,6 +2,13 @@
 
 ## Versions ##
 
+### Unreleased ###
+
+* Adds external hyperlink support with the `Link -Uri` keyword (#112)
+  * Word output uses `w:hyperlink` with an external relationship and the `Hyperlink` character style
+  * Html output uses `<a href>`; Text output includes the URI; Json output includes structured link objects
+  * Only http, https, ftp, mailto and tel targets are rendered as links
+
 ### 0.11.1 ###
 
 * Fixes bug in Word table references where header/footer is defined (#134)

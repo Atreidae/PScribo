@@ -37,6 +37,8 @@ function Get-WordDocument
         [ref] $null = $xmlDocument.DocumentElement.SetAttribute('xmlns:w14', $xmlnsw14)
         $body = $documentXml.AppendChild($xmlDocument.CreateElement('w', 'body', $xmlns))
         $script:pscriboIsFirstSection = $false
+        $script:pscriboWordHyperlinks = New-Object -TypeName 'System.Collections.Specialized.OrderedDictionary'
+        $script:pscriboWordInHeaderFooter = $false
 
         foreach ($subSection in $Document.Sections.GetEnumerator())
         {
