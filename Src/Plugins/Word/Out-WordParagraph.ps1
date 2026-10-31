@@ -91,6 +91,17 @@ function Out-WordParagraph
                     continue
                 }
 
+                if ($segment.Kind -eq 'Anchor')
+                {
+                    $bookmark = New-WordBookmark -AnchorId $segment.Id -XmlDocument $XmlDocument
+                    if ($null -ne $bookmark)
+                    {
+                        [ref] $null = $p.AppendChild($bookmark.Start)
+                        [ref] $null = $p.AppendChild($bookmark.End)
+                    }
+                    continue
+                }
+
                 $runs = Get-WordParagraphRun -Text $segment.Text -NoSpace:($noSpace -or (-not $isLastSegment))
 
                 foreach ($run in $runs)

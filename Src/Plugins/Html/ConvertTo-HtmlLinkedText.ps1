@@ -29,6 +29,14 @@ function ConvertTo-HtmlLinkedText
                     $encodedText = [System.Net.WebUtility]::HtmlEncode($resolvedText)
                     [ref] $null = $builder.Append($encodedText.Replace([System.Environment]::NewLine, '<br />'))
                 }
+                'Anchor'
+                {
+                    $anchorEntry = Get-PScriboAnchorEntry -Id $segment.Id
+                    if ($null -ne $anchorEntry)
+                    {
+                        [ref] $null = $builder.AppendFormat('<span id="{0}"></span>', $anchorEntry.Name)
+                    }
+                }
                 'Link'
                 {
                     $segment = Resolve-PScriboLinkSegment -Segment $segment

@@ -8,6 +8,9 @@
   * Word output uses `w:hyperlink` with an external relationship and the `Hyperlink` character style
   * Html output uses `<a href>`; Text output includes the URI; Json output includes structured link objects
   * Only http, https, ftp, mailto and tel targets are rendered as links
+* Adds `-Id` parameter to `Section` and `Table` to define link targets (#112)
+  * Adds `Get-PScriboAnchor` to mark other locations, e.g. a table row
+  * Word output adds bookmarks; Html output adds `id` attributes; Json output adds `id` properties
 
 ### 0.11.1 ###
 

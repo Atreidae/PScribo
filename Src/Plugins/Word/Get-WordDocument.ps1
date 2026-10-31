@@ -39,6 +39,8 @@ function Get-WordDocument
         $script:pscriboIsFirstSection = $false
         $script:pscriboWordHyperlinks = New-Object -TypeName 'System.Collections.Specialized.OrderedDictionary'
         $script:pscriboWordInHeaderFooter = $false
+        $script:pscriboWordBookmarks = New-Object -TypeName 'System.Collections.Generic.HashSet[System.String]' -ArgumentList ([System.StringComparer]::OrdinalIgnoreCase)
+        $script:pscriboWordBookmarkId = 0
 
         foreach ($subSection in $Document.Sections.GetEnumerator())
         {

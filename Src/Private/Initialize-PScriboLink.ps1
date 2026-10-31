@@ -22,6 +22,24 @@ function Initialize-PScriboLink
     )
     process
     {
+        $anchors = New-Object -TypeName 'System.Collections.Generic.Dictionary[System.String,System.Object]' -ArgumentList ([System.StringComparer]::Ordinal)
+        $usedNames = New-Object -TypeName 'System.Collections.Generic.HashSet[System.String]' -ArgumentList ([System.StringComparer]::OrdinalIgnoreCase)
+        $registerAnchor = {
+            param ($Id, $Type, $Title, $Number)
+            if ([System.String]::IsNullOrEmpty($Id))
+            {
+                return
+            }
+            if ($anchors.ContainsKey($Id))
+            {
+                Write-PScriboMessage -Message ($localized.DuplicateAnchorIdWarning -f $Id) -IsWarning
+                return
+            }
+            $name = Resolve-PScriboAnchorName -Id $Id -ExistingName $usedNames
+            [ref] $null = $usedNames.Add($name)
+            $anchors[$Id] = [PSCustomObject] @{ Id = $Id; Name = $name; Type = $Type; Title = $Title; Number = $Number }
+        }
+
         $texts = New-Object -TypeName 'System.Collections.ArrayList'
         $stack = New-Object -TypeName 'System.Collections.Stack'
         for ($i = $PScriboDocument.Sections.Count - 1; $i -ge 0; $i--)
@@ -36,6 +54,7 @@ function Initialize-PScriboLink
             {
                 'PScribo.Section'
                 {
+                    & $registerAnchor $item.LinkId 'Section' $item.Name $item.Number
                     for ($i = $item.Sections.Count - 1; $i -ge 0; $i--)
                     {
                         $stack.Push($item.Sections[$i])
@@ -50,6 +69,8 @@ function Initialize-PScriboLink
                 }
                 'PScribo.Table'
                 {
+                    $tableTitle = if ($item.HasCaption) { $item.Caption } else { $item.Name }
+                    & $registerAnchor $item.LinkId 'Table' $tableTitle $null
                     foreach ($row in $item.Rows)
                     {
                         foreach ($property in $row.PSObject.Properties)
@@ -72,7 +93,7 @@ function Initialize-PScriboLink
         }
 
         $linkCount = 0
-        $warnedTargets = New-Object -TypeName 'System.Collections.Generic.HashSet[System.String]'
+        $linkSegments = New-Object -TypeName 'System.Collections.ArrayList'
         foreach ($text in $texts)
         {
             if (($null -eq $text) -or ($text.IndexOf('<!#') -lt 0))
@@ -81,17 +102,35 @@ function Initialize-PScriboLink
             }
             foreach ($segment in @(Get-PScriboLinkSegment -Text $text))
             {
-                if ($segment.Kind -ne 'Link')
+                if ($segment.Kind -eq 'Anchor')
                 {
-                    continue
+                    & $registerAnchor $segment.Id 'Anchor' $null $null
                 }
-                $linkCount++
-                if ($segment.IsExternal -and (-not (Test-PScriboLinkUri -Uri $segment.Target)) -and $warnedTargets.Add($segment.Target))
+                elseif ($segment.Kind -eq 'Link')
+                {
+                    [ref] $null = $linkSegments.Add($segment)
+                }
+            }
+        }
+
+        ## Anchors can be defined after the links that refer to them, so validate once all are registered
+        $warnedTargets = New-Object -TypeName 'System.Collections.Generic.HashSet[System.String]'
+        foreach ($segment in $linkSegments)
+        {
+            $linkCount++
+            if ($segment.IsExternal)
+            {
+                if ((-not (Test-PScriboLinkUri -Uri $segment.Target)) -and $warnedTargets.Add($segment.Target))
                 {
                     Write-PScriboMessage -Message ($localized.UnsupportedLinkUriWarning -f $segment.Target) -IsWarning
                 }
             }
+            elseif ((-not $anchors.ContainsKey($segment.Target)) -and $warnedTargets.Add($segment.Target))
+            {
+                Write-PScriboMessage -Message ($localized.UnresolvedLinkWarning -f $segment.Target) -IsWarning
+            }
         }
         $PScriboDocument.Properties['Links'] = $linkCount
+        $PScriboDocument.Properties['Anchors'] = $anchors
     }
 }
