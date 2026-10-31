@@ -39,9 +39,24 @@ function ConvertTo-PScriboLinkText
                 'Link'
                 {
                     $displayText = Get-PScriboLinkDisplayText -Segment $segment
+                    $entry = $null
+                    if (-not $segment.IsExternal)
+                    {
+                        $entry = Get-PScriboAnchorEntry -Id $segment.Target
+                    }
+
                     if ($segment.IsExternal -and (Test-PScriboLinkUri -Uri $segment.Target) -and ($displayText -ne $segment.Target))
                     {
                         [ref] $null = $builder.AppendFormat('{0} > ({1})', $displayText, $segment.Target)
+                    }
+                    elseif (($null -ne $entry) -and ($entry.Type -eq 'Section') -and (-not [System.String]::IsNullOrEmpty($entry.Number)) -and $Document.Options['EnableSectionNumbering'])
+                    {
+                        [ref] $null = $builder.AppendFormat('{0} (see section {1})', $displayText, $entry.Number)
+                    }
+                    elseif ($null -ne $entry)
+                    {
+                        $seeTitle = if ([System.String]::IsNullOrEmpty($entry.Title)) { $segment.Target } else { $entry.Title }
+                        [ref] $null = $builder.AppendFormat("{0} (see '{1}')", $displayText, $seeTitle)
                     }
                     else
                     {

@@ -20,6 +20,14 @@ function Get-PScriboLinkDisplayText
         {
             return $Segment.Text
         }
+        if (-not $Segment.IsExternal)
+        {
+            $entry = Get-PScriboAnchorEntry -Id $Segment.Target
+            if (($null -ne $entry) -and (-not [System.String]::IsNullOrEmpty($entry.Title)))
+            {
+                return $entry.Title
+            }
+        }
         return $Segment.Target
     }
 }

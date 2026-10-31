@@ -18,9 +18,19 @@ function Resolve-PScriboLinkSegment
     process
     {
         $isResolved = $false
+        $anchorName = $null
         if ($Segment.IsExternal)
         {
             $isResolved = Test-PScriboLinkUri -Uri $Segment.Target
+        }
+        else
+        {
+            $entry = Get-PScriboAnchorEntry -Id $Segment.Target
+            if ($null -ne $entry)
+            {
+                $isResolved = $true
+                $anchorName = $entry.Name
+            }
         }
 
         return [PSCustomObject] @{
@@ -30,7 +40,7 @@ function Resolve-PScriboLinkSegment
             Id          = $Segment.Id
             IsExternal  = $Segment.IsExternal
             IsResolved  = $isResolved
-            AnchorName  = $null
+            AnchorName  = $anchorName
         }
     }
 }

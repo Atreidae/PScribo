@@ -46,6 +46,10 @@ function ConvertTo-HtmlLinkedText
                         $encodedUri = [System.Net.WebUtility]::HtmlEncode($segment.Target)
                         [ref] $null = $builder.AppendFormat('<a href="{0}" target="_blank" rel="noopener">{1}</a>', $encodedUri, $encodedText)
                     }
+                    elseif ($segment.IsResolved)
+                    {
+                        [ref] $null = $builder.AppendFormat('<a href="#{0}">{1}</a>', $segment.AnchorName, $encodedText)
+                    }
                     else
                     {
                         [ref] $null = $builder.Append($encodedText)
