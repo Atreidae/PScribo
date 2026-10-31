@@ -105,6 +105,31 @@ If you find it useful, unearth any bugs or have any suggestions for improvements
 feel free to add an [issue](https://github.com/iainbrighton/PScribo/issues) or
 place a comment at the project home page.
 
+## Links ##
+
+Paragraphs can contain external and internal links (see `Examples\Example45.ps1`):
+
+```powershell
+Document -Name 'Links' {
+    Paragraph {
+        Text 'Source code is on'
+        Link 'GitHub' -Uri 'https://github.com/iainbrighton/PScribo'
+        Text 'and the'
+        Link -Anchor 'details' -Text 'details' -NoSpace
+        Text 'are below.'
+    }
+    Section -Name 'Details' -Id 'details' { Paragraph 'Linked to from above' }
+}
+```
+
+* `Section -Id` and `Table -Id` define link targets; `Get-PScriboAnchor -Id` marks other locations (e.g. a table row).
+* `Get-PScriboLink -Anchor <id> -Text <text>` returns a link for use in table cells.
+* Links are resolved when the document is rendered, so forward references work. Unresolved links are rendered
+  as plain text with a warning.
+* Test for support with `Get-Command Get-PScriboLink -ErrorAction SilentlyContinue`.
+
+See `about_PScriboLinks` for details.
+
 ## Installation ##
 
 The _PScribo_ __preview__ is currently available as a Powershell module in the

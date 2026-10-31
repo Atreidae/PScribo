@@ -11,6 +11,11 @@
 * Adds `-Id` parameter to `Section` and `Table` to define link targets (#112)
   * Adds `Get-PScriboAnchor` to mark other locations, e.g. a table row
   * Word output adds bookmarks; Html output adds `id` attributes; Json output adds `id` properties
+* Adds internal hyperlinks with `Link -Anchor` and `Get-PScriboLink` for table cells - Example45.ps1 (#112)
+  * Links are resolved at output time so forward references work
+  * Word output uses `w:hyperlink` anchors; Html output uses `href="#id"`
+  * Text output includes a 'see section' reference; Json output includes structured link objects
+  * Unresolved links are rendered as plain text with a warning
 
 ### 0.11.1 ###
 
